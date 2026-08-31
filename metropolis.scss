@@ -1,0 +1,404 @@
+/*-- scss:defaults --*/
+
+/*------------------------------------*/
+/*            BASE COLORS             */
+/*------------------------------------*/
+// Shared palette.
+$metro-paper: #ffffff;
+$metro-ink: #263238;
+$metro-muted: #6b7479;
+$metro-accent: #2e74b5;
+$metro-accent-dark: #245d91;
+$metro-rule: #d7dde0;
+$metro-table-header: #343a40;
+$metro-table-row: #e9ecef;
+$metro-table-hover: #dbeafe;
+$metro-shadow: rgba(0, 0, 0, 0.15);
+$metro-frame-shadow: rgba(38, 50, 56, 0.16);
+
+// Quarto theme defaults.
+$body-bg: $metro-paper;
+$body-color: $metro-ink;
+$text-muted: $metro-muted;
+$link-color: $metro-accent;
+$link-color-hover: $metro-accent-dark;
+$selection-bg: $metro-accent;
+$selection-color: $metro-paper;
+
+/*------------------------------------*/
+/*       TYPOGRAPHY AND LAYOUT        */
+/*------------------------------------*/
+// Font families.
+$font-family-sans-serif: "Fira Sans Light", "Fira Sans", "Avenir Next", "Segoe UI", sans-serif;
+$font-family-monospace: "Fira Mono", "SFMono-Regular", monospace;
+
+// Presentation defaults.
+$presentation-font-size-root: 26px;
+$presentation-line-height: 1.3;
+$presentation-heading-font: $font-family-sans-serif;
+$presentation-heading-color: $metro-ink;
+$presentation-heading-line-height: 1.08;
+$presentation-heading-letter-spacing: 0;
+$presentation-heading-text-transform: none;
+$presentation-heading-text-shadow: none;
+$presentation-heading-font-weight: 400;
+$presentation-h1-font-size: 1.2em;
+$presentation-h2-font-size: 1.3em;
+$presentation-slide-text-align: left;
+$presentation-title-slide-text-align: center;
+$presentation-block-margin: 12px;
+
+/*-- scss:rules --*/
+
+/*------------------------------------*/
+/*            THEME TOKENS            */
+/*------------------------------------*/
+// CSS variables used by component rules.
+.reveal {
+  --metro-accent: #{$metro-accent};
+  --metro-accent-dark: #{$metro-accent-dark};
+  --metro-ink: #{$metro-ink};
+  --metro-muted: #{$metro-muted};
+  --metro-rule: #{$metro-rule};
+  --metro-paper: #{$metro-paper};
+  font-weight: 300;
+}
+
+/*------------------------------------*/
+/*       SLIDE LAYOUT AND HEADINGS    */
+/*------------------------------------*/
+// Align slide content.
+.reveal .slides {
+  text-align: left;
+}
+
+// Set slide padding.
+.reveal .slides section {
+  box-sizing: border-box;
+  padding: 0 1.15em 1.8em;
+}
+
+// Style slide headings.
+.reveal h2 {
+  background: var(--metro-accent) !important;
+  border: 0;
+  box-shadow: 0 0 0 100vmax var(--metro-accent);
+  color: $metro-paper !important;
+  clip-path: inset(0 -100vmax);
+  margin: 0 0 0.8em;
+  padding: 0.32em 0.7em;
+}
+
+/*------------------------------------*/
+/*          BODY TEXT AND LISTS       */
+/*------------------------------------*/
+// Align body copy.
+.reveal p,
+.reveal li {
+  color: var(--metro-ink);
+  text-align: left;
+}
+
+// Emphasize strong text.
+.reveal strong {
+  color: var(--metro-accent-dark);
+  font-weight: 400;
+}
+
+// Space lists.
+.reveal ul,
+.reveal ol {
+  margin: 0.35em 0 0.65em 0.55em;
+}
+
+// Separate list items.
+.reveal li + li {
+  margin-top: 0.5em;
+}
+
+// Color list markers.
+.reveal li::marker {
+  color: var(--metro-accent);
+}
+
+/*------------------------------------*/
+/*             TABSETS                */
+/*------------------------------------*/
+// Style tab labels.
+.reveal .panel-tabset-tabby a {
+  color: var(--metro-muted);
+  font-size: 0.62em;
+  font-weight: 400;
+}
+
+// Highlight the active tab.
+.reveal .panel-tabset-tabby a[data-tabby-default],
+.reveal .panel-tabset-tabby a[aria-selected="true"] {
+  color: var(--metro-ink);
+}
+
+/*------------------------------------*/
+/*             COLUMNS                */
+/*------------------------------------*/
+// Set column spacing.
+.reveal .columns {
+  gap: 1.25em;
+}
+
+// Style column labels.
+.reveal .column > .text-center {
+  border-bottom: 1px solid var(--metro-rule);
+  color: var(--metro-muted);
+  font-size: 0.68em;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.25em;
+  padding-bottom: 0.22em;
+  text-transform: uppercase;
+}
+
+/*------------------------------------*/
+/*       TABLE OF CONTENTS            */
+/*------------------------------------*/
+// Position the table of contents.
+.reveal #TOC {
+  padding: 1.2em 2em;
+  text-align: left;
+}
+
+// Limit navigation width.
+.reveal #TOC nav {
+  max-width: 78%;
+  margin: 0 auto;
+}
+
+// Style the contents heading.
+.reveal #TOC h2 {
+  background: transparent !important;
+  box-shadow: none;
+  clip-path: none;
+  color: var(--metro-ink) !important;
+  font-size: 1.35em;
+  margin: 0 0 0.8em;
+  padding: 0 0 0.25em;
+  border-bottom: 3px solid var(--metro-accent);
+}
+
+// Reset the contents list.
+.reveal #TOC ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+// Separate contents entries.
+.reveal #TOC li {
+  border-bottom: 1px solid var(--metro-rule);
+  margin: 0;
+  padding: 0.45em 0;
+}
+
+// Hide contents list markers.
+.reveal #TOC li::marker {
+  content: none;
+}
+
+// Style contents links.
+.reveal #TOC a {
+  color: var(--metro-accent);
+  font-size: 0.9em;
+  text-decoration: none;
+  transition: color 150ms ease;
+}
+
+// Highlight contents links on hover.
+.reveal #TOC a:hover {
+  color: var(--metro-accent-dark);
+}
+
+/*------------------------------------*/
+/*           NAVIGATION               */
+/*------------------------------------*/
+// Show presentation progress.
+.reveal .progress {
+  background: var(--metro-accent);
+  height: 4px;
+}
+
+// Color navigation controls.
+.reveal .controls {
+  color: var(--metro-accent);
+}
+
+/*------------------------------------*/
+/*           SLIDE NUMBER             */
+/*------------------------------------*/
+// Position the slide counter.
+.reveal .slide-number {
+  background: transparent;
+  bottom: 0.25em;
+  color: var(--metro-muted);
+  font-family: $font-family-monospace;
+  font-size: 0.45em;
+  right: 1.1em;
+}
+
+/*------------------------------------*/
+/*           TITLE SLIDE              */
+/*------------------------------------*/
+// Reset default heading styles on the title slide.
+.reveal #title-slide,
+.reveal #title-slide.quarto-title-block,
+.reveal #title-slide h1,
+.reveal #title-slide h2 {
+  background: var(--metro-paper) !important;
+  color: var(--metro-ink);
+}
+
+// Remove title-slide pseudo-elements.
+.reveal #title-slide::before,
+.reveal #title-slide::after {
+  background: transparent !important;
+  content: none !important;
+}
+
+// Underline the presentation title.
+.reveal #title-slide h1 {
+  border-bottom: 3px solid var(--metro-accent);
+  font-size: 1.3em;
+  padding-bottom: 0.2em;
+}
+
+/*------------------------------------*/
+/*        OVERLAY UTILITIES           */
+/*------------------------------------*/
+// Reserve space for layered content.
+.reveal .overlay-stack {
+  display: grid;
+}
+
+// Overlay content in the same area.
+.reveal .overlay-stack > p {
+  grid-area: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+}
+
+// Keep overlay images unscaled.
+.reveal .overlay-stack > p img {
+  height: auto;
+  width: auto;
+  margin: 0;
+}
+
+// Reserve space for overlay captions.
+.reveal .overlay-caption {
+  min-height: 1.5em;
+}
+
+// Center overlay captions.
+.reveal .overlay-caption > p {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  text-align: center;
+}
+
+/*------------------------------------*/
+/*       INTERACTIVE CONTENT          */
+/*------------------------------------*/
+// Frame embedded interactive content.
+.reveal .interactive-frame {
+  width: 82vw;
+  height: 62vh;
+  margin: 0.2em auto 0;
+  border: 1px solid $border-color;
+  box-shadow: 0 0.15em 0.45em $metro-frame-shadow;
+  overflow: hidden;
+}
+
+// Fill the frame with its iframe.
+.reveal .interactive-frame iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+/*------------------------------------*/
+/*         SMALL-SCREEN RULES         */
+/*------------------------------------*/
+@media (max-width: 700px) {
+  // Reduce the base font size.
+  .reveal {
+    font-size: 20px;
+  }
+
+  // Tighten slide padding.
+  .reveal .slides section {
+    padding-left: 0.7em;
+    padding-right: 0.7em;
+  }
+
+  // Match heading padding to slides.
+  .reveal h2 {
+    padding-left: 0.7em;
+    padding-right: 0.7em;
+  }
+
+  // Resize embedded content.
+  .reveal .interactive-frame {
+    width: 92vw;
+    height: 58vh;
+  }
+}
+
+/*------------------------------------*/
+/*            DATA TABLES             */
+/*------------------------------------*/
+// Frame course data tables.
+.data-table table {
+  margin: auto;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.8em;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px $metro-shadow;
+}
+
+// Style table headers.
+.data-table thead th {
+  background: $metro-table-header;
+  color: $metro-paper;
+  font-weight: 600;
+  padding: 12px 20px;
+  border: none;
+}
+
+// Space table cells.
+.data-table tbody td {
+  padding: 10px 20px;
+  border: none;
+}
+
+// Shade even rows.
+.data-table tbody tr:nth-child(even) {
+  background: $metro-table-row;
+}
+
+// Keep odd rows plain.
+.data-table tbody tr:nth-child(odd) {
+  background: $metro-paper;
+}
+
+// Emphasize first-column labels.
+.data-table tbody td:first-child {
+  font-weight: 600;
+}
+
+// Highlight rows on hover.
+.data-table tbody tr:hover {
+  background: $metro-table-hover;
+}

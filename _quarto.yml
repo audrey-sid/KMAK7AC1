@@ -1,0 +1,44 @@
+project:
+  type: website
+  output-dir: _site
+
+website:
+  title: "Statistical Exploration"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: chapter1.qmd
+        text: "Chapter 1: PCA"
+      - href: schedule.qmd
+        text: Schedule
+      - href: assessments.qmd
+        text: Assessments
+      - href: resources.qmd
+        text: Resources
+    right:
+      - icon: github
+        href: https://github.com/
+        aria-label: Course repository
+  sidebar:
+    style: docked
+    search: true
+    contents:
+      - section: "Course"
+        contents:
+          - index.qmd
+          - chapter1.qmd
+          - schedule.qmd
+          - assessments.qmd
+          - resources.qmd
+
+format:
+  html:
+    theme: cosmo
+    css: styles.css
+    toc: true
+    toc-location: right
+    code-copy: true
+
+execute:
+  freeze: auto
