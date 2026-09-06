@@ -1,0 +1,1635 @@
+---
+title: "Chapitre 1 - Analyse en composantes principales"
+subtitle: "ACP"
+author: "Benjamin Charlier, Adrien Mazoyer"
+date: ""
+format:
+  revealjs:
+    theme: metropolis.scss
+    slide-number: true
+    transition: fade
+    chalkboard: false
+    code-line-numbers: false
+    eval: true
+    echo: true
+    format:
+    width: 1024
+    height: 768
+
+knitr:
+  opts_chunk:
+    prompt: true
+---
+# Objectifs
+
+
+## Description des données
+
+On travaille sur des tableaux de données où
+
+- les [**lignes**]{.blue} correspondent aux [**individus**]{.blue}
+- les [**colonnes**]{.orange} correspondent aux [**variables quantitatives**]{.orange} étudiées (i.e. des nombres)
+
+::: {.data-table}
+|              | Variable 1 | $\cdots$ | Variable p |
+|:------------:|:----------:|:--------:|:----------:|
+| Individu $1$ | $x_{1,1}$  | $\cdots$ | $x_{1,p}$  |
+| $\vdots$     | $\vdots$   |          | $\vdots$   |
+| Individu $n$ | $x_{n,1}$  | $\cdots$ | $x_{n,p}$  |
+:::
+
+$x_{i,j}$ : mesure de la variable $j$ pour l’individu $i$.
+
+::: {.panel-tabset}
+### Iris (R)
+
+```{r}
+
+head(iris)
+```
+
+### Mtcars (R)
+
+```{r}
+
+head(mtcars)
+```
+
+### Wine (Python)
+
+```{python}
+#| prompt: false
+
+from sklearn.datasets import load_wine
+
+wine = load_wine(as_frame=True)
+print(wine.frame.head().to_string(max_cols=8))
+```
+:::
+
+## Objectifs
+
+L’**analyse en composantes principales (ACP)** est une méthode exploratoire et descriptive permettant d’étudier un tableau de données comportant plusieurs variables quantitatives (réduction de dimension).
+
+
+- [Individus]{.blue}: identifier des profils similaires ou différents, étudier leur variabilité et représenter graphiquement dans un espace de faible dimension
+
+- [variables]{.orange}: étudier leur structure de dépendance (corrélations), identifier d’éventuels groupes de variables liées et de les représenter graphiquement.
+
+**Idée:** trouver une représentation de faible dimension la plus fiable/cohérente/précise.
+
+**Moyen:** il faut choisir un critère:  Exploiter la structure géométrique (euclidienne) des données pour construire un sous-espace vectoriel de faible dimension dans lequel les données sont représentées en préservant au mieux leur structure et leur variabilité
+
+**Référence:** en ligne [@besse_acp] un livre [@escofier_pages2016].
+
+## Le tableau de donnees
+
+Le tableau ([individus]{.blue},[variables]{.orange}) est représenté sous la forme d’une matrice $X$ de taille $n\times p$: 
+$$
+X = \begin{pmatrix}X_{:,1} & \cdots & X_{:,p} \end{pmatrix}=  \begin{pmatrix} X_{1,:}\\ \vdots \\ X_{n,:} \end{pmatrix}= \begin{pmatrix}
+x_{1,1} & \cdots & x_{1,p} \\
+\vdots & \ddots & \vdots \\
+x_{n,1} & \cdots & x_{n,p}
+\end{pmatrix}.
+$$
+
+::: {.callout-note}
+- Colonnes **actives** : variables utilisées pour construire l’ACP (par défaut, si rien n’est précisé).
+- Dans le cas contraire, on parle de variables **supplémentaires**, utiles pour l’**interprétation** des axes.
+:::
+
+::: {.panel-tabset}
+
+
+### Notation
+- La valeur $x_{i,j}$ est la mesure de la variable $j$ pour l'individu $i$.
+- La ligne $i$, notée $X_{i,:}\in\mathbb{R}^p$, représente l'individu $i$.
+- La colonne $j$, notée $X_{:,j}\in\mathbb{R}^n$, contient les valeurs de la variable $j$.
+
+### en R
+```{r}
+#| echo: true
+
+X <- matrix(c(1, 2, 3, 4, 5, 6), nrow = 2, ncol = 3, byrow = TRUE)
+i <- 1; j <- 3
+
+X[i, j]  # valeur x_{i,j}
+X[i, ]   # individu i
+X[, j]   # variable j
+```
+
+
+### en Python
+
+```{python}
+#| echo: true
+#| prompt: false
+
+import numpy as np
+
+X = np.array([[1, 2, 3], [4, 5, 6]])
+i, j = 0, 2
+
+X[i, j]  # valeur x_{i,j}
+X[i, :]  # individu i
+X[:, j]  # variable j
+```
+
+:::
+
+# Principe de l'ACP
+
+## Nuage des individus
+
+
+**Représentation graphique:** Chaque individu est un point dans $\mathbb{R}^p$
+
+- Si $p \in \{1, 2\}$ on peut les représenter graphiquement;
+- Si $p = \{3, 4 \}$, c’est plus compliqué, mais on est capable de le faire ;
+- Si $p > 4$ ce n'est pas possible à représenter ou même imaginer !
+
+
+::: {.panel-tabset}
+### Nuage 2D
+```{r}
+#| echo: false 
+#| #| fig-width: 6 
+#| #| fig-height: 4 
+
+set.seed(123)
+n <- 80 
+x  <- rnorm(n)
+y <- 0.7*x + rnorm(n, sd = 0.7)
+plot(x, y, pch = 19, xlab = "Variable 1", ylab = "Variable 2", main = "Nuage des individus dans R²") 
+```
+
+
+### Nuage 3D
+```{r}
+#| echo: false
+
+library(plotly)
+set.seed(123)
+
+n <- 120
+u <- runif(n, -2, 2)
+v <- runif(n, -2, 2)
+w <- sin(u * 2.5) + cos(v * 2.5) + rnorm(n, sd = 0.25)
+
+x <- u + 0.3 * rnorm(n)
+y <- v + 0.3 * rnorm(n)
+z <- w
+
+plot_ly(
+  x = x, y = y, z = z,
+  type = "scatter3d",
+  mode = "markers",
+  marker = list(size = 4, opacity = 0.8, color = "#2e74b5")
+)
+```
+
+### Nuage 3D+t
+```{r}
+#| echo: false
+
+# exemple de nuage 3D+t. 
+```
+
+:::
+
+## Nuage des individus
+
+Remarque pour $p = 3$
+
+- On ne représente pas réellement le nuage en 3 dimensions
+
+- On l’observe selon différents points de vue (plans de projection)
+
+- Certains points de vue sont meilleurs que d’autres : ce sont ceux où la forme du nuage est la moins altérée
+
+::: {layout-ncol=2}
+![Kumi Yamashita](data/projection.jpg){height=200}
+
+![https://kumiyamashita.com/light-shadow](data/projection2.jpg){height=200}
+
+:::
+
+
+
+### Objectif de l’ACP
+
+Trouver le plan de projection permettant de visualiser une approximation en 2 dimensions du nuage des individus qui vit dans $\mathbb{R}^p$.
+
+## Pre-traitement : centrage et reduction
+
+Notation: la moyenne et la variance de $X_{:,j}$ sont définies par
+$$
+\bar{X}_{:,j}
+= \frac{1}{n}\sum_{i=1}^{n} X_{i,j},
+\qquad
+s^2_{X_{:,j}}
+= \frac{1}{n}\sum_{i=1}^{n}
+\left(X_{i,j}-\bar{X}_{:,j}\right)^2.
+$$
+
+
+Nous utiliserons l'ecart-type non corrige. 
+
+<br>
+
+Dans ce cours, les données sont systématiquement **centrées et réduites** colonne par colonne :
+$$
+X_{i,j} \leftarrow \frac{X_{i,j} - \bar{X}_{:,j}}{s_{X_{:,j}}}.
+$$
+
+Ce traitement amène à moyenne 0 et variance a 1 et supprime les effets d'échelle (unites de mesure). 
+
+::: {.callout-note}
+### Consequence
+
+Pour les données standardisées, le centre de gravité du nuage des individus est l’origine. Sa matrice d’inertie est la matrice de corrélation des données initiales et son inertie totale est égale à $p$ (dimension de l’espace des individus).
+:::
+
+## Inertie d'un nuage de point
+
+- Le **centre de gravité** $G$ des points $A_i = (a_{i,1}, \ldots, a_{i,p}) \in \mathbb R^p$ est le point de coordonnées
+
+$$
+G = (\bar{a}_{:,1}, \ldots, \bar{a}_{:,p}) = \left(\frac{1}{n}\sum_{i=1}^n a_{i,1}, \ldots,
+\frac{1}{n}\sum_{i=1}^n a_{i,p}\right) \in \mathbb R^p.
+$$
+
+- La **matrice d'inertie** est définie par
+
+$$
+S =
+\frac{1}{n}
+\begin{pmatrix}
+A_1-G\\
+\vdots\\
+A_n-G
+\end{pmatrix}^{\!\top}
+\begin{pmatrix}
+A_1-G\\
+\vdots\\
+A_n-G
+\end{pmatrix} \in \mathbb R^{p \times p}.
+$$
+
+- L'**inertie** du nuage autour de son centre de gravité est la moyenne des distances **au carré** des points $A_i$ à $G$ :
+$$
+\operatorname{Inertie}
+=
+\frac{1}{n}\sum_{i=1}^n \|A_i-G\|^2
+=
+\frac{1}{n}\sum_{i=1}^n
+\sum_{j=1}^p (a_{i,j}-g_j)^2
+=
+\operatorname{tr}(S).
+$$
+
+
+
+## Droite d'inertie maximale
+
+```{r}
+#| echo: false
+
+set.seed(123)
+
+# --- Corps de l'avion ---
+n_body <- 1200
+x <- runif(n_body, -5, 5)
+y <- rnorm(n_body, 0, 0.22)
+z <- rnorm(n_body, 0, 0.22)
+
+# --- Ailes principales ---
+n_wing <- 800
+x_w <- runif(n_wing, -1.8, 1.8)
+max_y <- 4 * sqrt(pmax(0, 1 - (x_w / 1.8)^2))
+y_w <- sample(c(-1, 1), n_wing, replace = TRUE) *
+  runif(n_wing, 0.2, max_y)
+z_w <- rnorm(n_wing, 0, 0.12)
+
+# --- Empennage horizontal ---
+n_tail <- 300
+x_t <- runif(n_tail, -4.3, -2.8)
+y_t <- sample(c(-1, 1), n_tail, replace = TRUE) *
+  runif(n_tail, 0.1, 1.5)
+z_t <- rnorm(n_tail, 0, 0.12)
+
+# --- Empennage vertical ---
+n_fin <- 200
+x_f <- runif(n_fin, -4.3, -2.8)
+y_f <- rnorm(n_fin, 0, 0.12)
+z_f <- runif(n_fin, 0, 1.3)
+
+# Nuage complet
+X <- data.frame(
+  x = c(x, x_w, x_t, x_f),
+  y = c(y, y_w, y_t, y_f),
+  z = c(z, z_w, z_t, z_f)
+)
+```
+
+
+On part d’un nuage qui vit dans $\mathbb R^2$, et on veut une image approchée en dimension 1.
+
+```{r}
+#| echo: false
+#| fig-width: 7
+#| fig-height: 7
+#| out-width: "100%"
+
+
+library(plotly)
+
+set.seed(123)
+
+# Nuage 2D centré dans le plan défini par les deux premières variables
+X_2D <- X[, c("x", "z")]
+X_2D <- scale(X_2D, center = TRUE, scale = FALSE)
+
+# Angles
+angles <- seq(0, pi, length.out = 61)
+
+# Fonction : données pour un angle
+projection <- function(theta) {
+  
+  u <- c(cos(theta), sin(theta))
+  
+  # Projection orthogonale
+  P <- X_2D %*% u %*% t(u)
+  
+  # Droite
+  s <- seq(-5, 5, length.out = 100)
+  droite <- cbind(s * u[1], s * u[2])
+  
+  # Variance projetée
+  var_proj <- mean(rowSums(P^2))
+  
+  list(P = P, droite = droite, var = var_proj)
+}
+
+# Données initiales
+d <- projection(angles[1])
+idx <- seq(1, nrow(X_2D), by = 4)
+
+# Figure initiale
+fig <- plot_ly() %>%
+  
+  # Points
+  add_trace(
+    x = X_2D[idx,1], y = X_2D[idx,2],
+    type = "scatter", mode = "markers",
+    name = "Nuage"
+  ) %>%
+  
+  # Segments vers les projections
+  add_trace(
+    x = c(rbind(X_2D[idx,1], d$P[idx,1], NA)),
+    y = c(rbind(X_2D[idx,2], d$P[idx,2], NA)),
+    type = "scatter", mode = "lines",
+    line = list(dash = "dot"),
+    showlegend = TRUE
+  ) %>%
+  
+  # Points projetés
+  add_trace(
+    x = d$P[idx,1], y = d$P[idx,2],
+    type = "scatter", mode = "markers",
+    marker = list(size = 10),
+    name = "Projections"
+  ) %>%
+  
+  # Droite
+  add_trace(
+    x = d$droite[,1], y = d$droite[,2],
+    type = "scatter", mode = "lines",
+    line = list(width = 2),
+    name = "Droite"
+  )
+
+# Frames / étapes du slider
+steps <- lapply(seq_along(angles), function(i) {
+  
+  d <- projection(angles[i])
+  
+  list(
+    method = "update",
+    label = paste0(round(angles[i] * 180 / pi), "°"),
+    args = list(
+      list(
+        x = list(
+          X_2D[idx,1],
+          c(rbind(X_2D[idx,1], d$P[idx,1], NA)),
+          d$P[idx,1],
+          d$droite[,1]
+        ),
+        y = list(
+          X_2D[idx,2],
+          c(rbind(X_2D[idx,2], d$P[idx,2], NA)),
+          d$P[idx,2],
+          d$droite[,2]
+        )
+      )
+    )
+  )
+})
+
+fig %>%
+layout(
+  width = 900,
+  height = 650,
+  autosize = FALSE,
+
+  title = list(
+    text = "Quelle est la meilleure droite de projection ?",
+    x = 0.5
+  ),
+
+  margin = list(l = 40, r = 30, b = 40, t = 60),
+
+  xaxis = list(
+    title = "X₁",
+    range = c(-5, 5),
+    scaleanchor = "y",
+    scaleratio = 1
+  ),
+
+  yaxis = list(
+    title = "X₂",
+    range = c(-7, 7)
+  ),
+
+  sliders = list(
+    list(
+      active = 50,
+      x = 0.15,
+      y = -0.08,
+      len = 0.7,
+      currentvalue = list(prefix = "Angle θ = "),
+      steps = steps
+    )
+  )
+)
+
+
+```
+
+## Example jouet
+
+- La "meilleure" droite de projection est celle pour laquelle la structure du nuage est la mieux conservée après projection.
+
+- Nous allons caractériser cette structure à l'aide de l'inertie du nuage de points.
+
+- On cherche donc la droite de projection qui modifie le moins l’inertie totale du
+nuage de point après projection.
+
+- Plus formellement, on cherche une droite $(D)$, passant par l'origine, telle que
+$$
+\frac{1}{n}
+\sum_{i=1}^n
+\|H_i\|^2
+$$
+
+soit maximale, où $H_i$ est le projeté orthogonal de l'individu $X_{i,:}$ sur $(D)$.
+
+
+## Sous espaces d'inertie maximale
+
+```{r}
+#| echo: false
+
+library(plotly)
+
+# ------------------------------------------------------------
+# ACP
+# ------------------------------------------------------------
+
+acp <- prcomp(X, center = TRUE, scale. = FALSE)
+
+G <- colMeans(X)
+V <- acp$rotation[, 1:3]
+axis_colors <- c("#d62728", "#2ca02c", "#1f77b4")
+
+
+# --- Données centrées ---
+X_mat <- as.matrix(X)
+X_centered <- sweep(X_mat, 2, G, "-")
+
+
+# ------------------------------------------------------------
+# Projections
+# ------------------------------------------------------------
+
+V1 <- V[, 1, drop = FALSE]
+
+X_proj_1 <- X_centered %*% V1 %*% t(V1)
+X_proj_1 <- sweep(X_proj_1, 2, G, "+")
+
+
+V12 <- V[, 1:2]
+
+X_proj_2 <- X_centered %*% V12 %*% t(V12)
+X_proj_2 <- sweep(X_proj_2, 2, G, "+")
+
+
+V123 <- V[, 1:3]
+
+X_proj_3 <- X_centered %*% V123 %*% t(V123)
+X_proj_3 <- sweep(X_proj_3, 2, G, "+")
+
+
+# ------------------------------------------------------------
+# Axes principaux
+# ------------------------------------------------------------
+
+s <- seq(-6, 6, length.out = 100)
+
+axes <- lapply(1:3, function(k) {
+  data.frame(
+    x = G[1] + s * V[1, k],
+    y = G[2] + s * V[2, k],
+    z = G[3] + s * V[3, k]
+  )
+})
+
+
+# ------------------------------------------------------------
+# Plan principal PC1-PC2
+# ------------------------------------------------------------
+
+u <- seq(-6, 6, length.out = 20)
+v <- seq(-6, 6, length.out = 20)
+
+grid <- expand.grid(u = u, v = v)
+
+plane <- matrix(
+  G,
+  nrow = nrow(grid),
+  ncol = 3,
+  byrow = TRUE
+) +
+  grid$u %o% V[, 1] +
+  grid$v %o% V[, 2]
+
+plane_x <- matrix(plane[, 1], length(u), length(v))
+plane_y <- matrix(plane[, 2], length(u), length(v))
+plane_z <- matrix(plane[, 3], length(u), length(v))
+
+
+# ------------------------------------------------------------
+# Figure
+# ------------------------------------------------------------
+
+fig <- plot_ly()
+
+
+# ------------------------------------------------------------
+# Nuage original : toujours visible et transparent
+# ------------------------------------------------------------
+
+fig <- fig %>%
+  add_trace(
+    data = X,
+    x = ~x, y = ~y, z = ~z,
+    type = "scatter3d",
+    mode = "markers",
+    marker = list(
+      size = 1.5,
+      opacity = 0.15
+    ),
+    name = "Nuage original",
+    visible = TRUE
+  )
+
+
+# ------------------------------------------------------------
+# Projection sur PC1
+# ------------------------------------------------------------
+
+fig <- fig %>%
+  add_trace(
+    data = as.data.frame(X_proj_1),
+    x = ~x, y = ~y, z = ~z,
+    type = "scatter3d",
+    mode = "markers",
+    marker = list(size = 2.5),
+    name = "Projection sur PC1",
+    visible = TRUE
+  )
+
+
+# ------------------------------------------------------------
+# Projection sur PC1-PC2
+# ------------------------------------------------------------
+
+fig <- fig %>%
+  add_trace(
+    data = as.data.frame(X_proj_2),
+    x = ~x, y = ~y, z = ~z,
+    type = "scatter3d",
+    mode = "markers",
+    marker = list(size = 2.5),
+    name = "Projection sur PC1-PC2",
+    visible = FALSE
+  )
+
+
+# ------------------------------------------------------------
+# Projection sur PC1-PC2-PC3
+# ------------------------------------------------------------
+
+fig <- fig %>%
+  add_trace(
+    data = as.data.frame(X_proj_3),
+    x = ~x, y = ~y, z = ~z,
+    type = "scatter3d",
+    mode = "markers",
+    marker = list(size = 2.5),
+    name = "Projection sur PC1-PC2-PC3",
+    visible = FALSE
+  )
+
+
+# ------------------------------------------------------------
+# Axes principaux
+# ------------------------------------------------------------
+
+for (k in 1:3) {
+
+  fig <- fig %>%
+    add_trace(
+      data = axes[[k]],
+      x = ~x, y = ~y, z = ~z,
+      type = "scatter3d",
+      mode = "lines",
+      line = list(
+        width = 7,
+        color = axis_colors[k]
+      ),
+      name = paste0("PC", k),
+      visible = (k == 1)
+    )
+}
+
+
+# ------------------------------------------------------------
+# Plan principal
+# ------------------------------------------------------------
+
+fig <- fig %>%
+  add_surface(
+    x = ~plane_x,
+    y = ~plane_y,
+    z = ~plane_z,
+    opacity = 0.25,
+    showscale = FALSE,
+    name = "Plan PC1-PC2",
+    visible = FALSE
+  )
+
+
+# ------------------------------------------------------------
+# Slider
+# ------------------------------------------------------------
+
+steps <- list(
+
+  # Projection sur PC1
+  list(
+    method = "update",
+
+    args = list(
+      list(
+        visible = c(
+          TRUE,                 # nuage original
+          TRUE, FALSE, FALSE,   # projections
+          TRUE, FALSE, FALSE,   # axes
+          FALSE                 # plan
+        )
+      ),
+      list(title = "Projection sur le premier axe principal")
+    ),
+
+    label = "PC1"
+  ),
+
+
+  # Projection sur PC1-PC2
+  list(
+    method = "update",
+
+    args = list(
+      list(
+        visible = c(
+          TRUE,                 # nuage original
+          FALSE, TRUE, FALSE,   # projections
+          TRUE, TRUE, FALSE,    # axes
+          TRUE                  # plan
+        )
+      ),
+      list(title = "Projection sur le premier plan principal")
+    ),
+
+    label = "PC1-PC2"
+  ),
+
+
+  # Trois axes
+  list(
+    method = "update",
+
+    args = list(
+      list(
+        visible = c(
+          TRUE,                 # nuage original
+          FALSE, FALSE, TRUE,   # projections
+          TRUE, TRUE, TRUE,     # axes
+          FALSE                 # plan
+        )
+      ),
+      list(title = "Projection sur les trois axes principaux")
+    ),
+
+    label = "PC1-PC2-PC3"
+  )
+)
+
+
+# ------------------------------------------------------------
+# Affichage
+# ------------------------------------------------------------
+
+fig %>%
+  layout(
+
+    title = list(
+      text = "Projection progressive sur les axes principaux",
+      x = 0.5
+    ),
+
+    scene = list(
+      xaxis = list(title = "X", range = c(-6, 6)),
+      yaxis = list(title = "Y", range = c(-6, 6)),
+      zaxis = list(title = "Z", range = c(-6, 6)),
+      aspectmode = "manual",
+      aspectratio = list(x = 1, y = 1, z = 0.8)
+    ),
+
+    sliders = list(
+      list(
+        active = 0,
+
+        currentvalue = list(
+          prefix = "Projection : "
+        ),
+
+        steps = steps
+      )
+    )
+  )
+```
+
+- La premiere direction principale est celle sur laquelle l'inertie des projections est maximale. 
+- Les directions suivantes maximisent la meme quantite sous la contrainte d'etre orthogonales aux directions deja retenues.
+
+
+## Principe de l'ACP
+
+### Problème
+
+On considère un nuage de points dans $\mathbb{R}^p$, avec $p>2$, et on cherche une bonne représentation de ce nuage dans un espace vectoriel de dimension $q\ll p$ (typiquement $q=2$ ou $3$). On cherche donc à identifier $q$ directions orthogonales
+$$
+u_1,\ldots,u_q,
+$$
+qui définissent un sous-espace de dimension $q$ sur lequel l'inertie des projections est maximale.
+
+### Solution
+
+1. $u_1$ est la direction d'inertie maximale ;
+
+2. $u_2$ est la direction d'inertie maximale parmi les directions orthogonales à $u_1$ ;
+
+3. $u_3$ est la direction d'inertie maximale parmi les directions orthogonales à $u_1$ et $u_2$ ;
+
+4. $\ldots$
+
+5. $u_q$ est la direction d'inertie maximale parmi les directions orthogonales à $u_1,\ldots,u_{q-1}$.
+
+L'hyperplan recherché est donc le sous-espace engendré par les vecteurs
+$$
+\operatorname{Vect}(u_1,\ldots,u_q).
+$$
+
+Les vecteurs $u_1,\ldots,u_q$ sont appelés les **directions principales** (ou **axes principaux**).
+
+## Matrice de covariance et axes principaux
+
+On considère que les données ont été centrées. La **matrice de covariance** des données est alors
+$$
+S=\frac{1}{n}X^\top X \in \mathbb R^{p\times p},
+$$
+Il s'agit également de la matrice d'inertie du nuage des individus.
+
+- La matrice $S$ est **symétrique**, donc diagonalisable dans une base orthonormée^[Théorème spectral, [https://www.youtube.com/watch?v=mhy-ZKSARxI](https://www.youtube.com/watch?v=mhy-ZKSARxI)] :
+
+$$
+S=P\Lambda P^\top,
+$$
+
+où $P$ est une matrice **orthogonale** $P^\top P=PP^\top=I$ et
+$$
+\Lambda=\operatorname{diag}(\lambda_1,\ldots,\lambda_p)
+$$
+
+contient les valeurs propres de $S$.
+
+- Comme $S$ est **symétrique semi-définie positive**, ses valeurs propres vérifient
+$$
+\lambda_1\geq\lambda_2\geq\cdots\geq\lambda_p\geq0.
+$$
+
+- Les colonnes de $P$ sont les **vecteurs propres** de $S$ et correspondent aux **directions principales**.
+
+
+## L'Analyse en Composantes Principales
+
+Réaliser une Analyse en Composantes Principales s'effectue en **3 étapes** :
+
+1. **Calculer et diagonaliser** la matrice de covariance (ou de corrélation) $S$.
+
+2. **Ranger les valeurs propres** par ordre décroissant :
+$$
+\lambda_1 \geq \lambda_2 \geq \cdots \geq \lambda_p \geq 0.
+$$
+
+3. Pour chaque valeur propre $\lambda_k$, **identifier un vecteur propre** $u_k$ associé.
+
+Les vecteurs propres $u_1,\ldots,u_p$ correspondent aux **directions principales** : $u_k$ est la direction d'inertie maximale sous la contrainte d'être orthogonale à $u_1,\ldots,u_{k-1}$.
+
+::: {.callout-note}
+La valeur propre $\lambda_k$ mesure l'**inertie portée par la direction principale** $u_k$.
+:::
+
+
+## Example classique
+
+Moyennes des températures mensuelles sur la période 1991-2020 dans 14 villes
+françaises
+
+```{r}
+#| echo: false
+
+fname <- "./data/AnaDo_JeuDonnees_TemperatFrance.csv"
+
+temperature <- read.csv(
+  fname,
+  header = TRUE,
+  sep = ";",
+  row.names = 1,
+  fileEncoding = "latin1"
+)
+
+```
+<style>
+table {
+  font-size: 0.55em;
+}
+</style>
+
+```{r}
+#| echo: false
+
+temperature_mois <- temperature[1:14, 1:12]
+temperature_sup <- temperature[1:14, c("Lati", "Long")]
+
+temperature_affichage <- cbind(
+  temperature_mois,
+  temperature_sup
+)
+
+knitr::kable(
+  temperature_affichage,
+  caption = "Températures mensuelles et coordonnées géographiques"
+)
+
+```
+L’ACP va nous aider à simplifier les données de sorte à
+
+-  identifier les profils de villes en terme de températures
+- étudier la variabilité de ces profils.
+
+## Example classique
+Moyennes des températures mensuelles sur la période 1991-2020 dans 14 villes
+françaises après réduction.
+<style>
+table {
+  font-size: 0.55em;
+}
+</style>
+
+```{r}
+#| echo: false
+
+# Variables actives : températures mensuelles
+temperature_mois_centered_reduced <- scale(temperature_mois, center = TRUE, scale = TRUE)
+
+knitr::kable(
+  round(temperature_mois_centered_reduced, 2),
+  caption = "Températures mensuelles centrées-réduites"
+)
+```
+::: {.callout-note}
+(Lati et Long sont des variables supplémentaires → mises de côté)
+:::
+
+
+## Premier résultat: les valeurs propres
+
+```{r}
+#| echo: false
+
+library(FactoMineR)
+library(ggplot2)
+
+acp <- PCA(
+  temperature,
+  scale.unit = TRUE,
+  quanti.sup = c("Lati", "Long", "Moye", "Ampl"),
+  quali.sup = "Région",
+  graph = FALSE
+)
+
+eig <- data.frame(
+  axe = 1:nrow(acp$eig),
+  valeur_propre = acp$eig[, 1],
+  variance = acp$eig[, 2]
+)
+
+ggplot(eig, aes(x = axe, y = valeur_propre, group = 1)) +
+  geom_line() +
+  geom_point(size = 3) +
+  labs(
+    x = "Composante principale",
+    y = "Valeur propre"
+  ) +
+  theme_minimal(base_size = 16)
+```
+
+On cherche à
+
+- Visualiser les données, idéalement en 2D → Le plan d’inertie maximale est-il pertinent ? Et les suivants ?
+- Réduire la dimension des données → Jusqu’à combien de dimensions peut-on projeter le nuage de points ?
+
+
+## Combien d'axes conserver ?
+
+La part d'inertie expliquée par les $k$ premiers axes est :
+
+$$
+i_k =
+\frac{\sum_{j=1}^k \lambda_j}
+{\sum_{j=1}^p \lambda_j}.
+$$
+
+::: {.callout-note}
+L'**inertie totale** du nuage est $\sum_{j=1}^p \lambda_j$.
+:::
+
+::: columns
+
+::: {.column width="70%"}
+```{r}
+#| echo: false
+#| fig-width: 10
+#| fig-height: 5
+#| out-width: "100%"
+
+eig$cum_variance <- cumsum(eig$variance)
+
+ggplot(eig, aes(x = axe, y = cum_variance, group = 1)) +
+  geom_line() +
+  geom_point(size = 3) +
+  labs(
+    x = "Axe principal",
+    y = "Inertie cumulée (%)"
+  ) +
+  theme_minimal(base_size = 16) +
+  scale_y_continuous(limits = c(0, 100))
+
+```
+
+:::
+
+::: {.column width="30%"}
+On a $i_1 = 0.824$ et $i_2 = 0.992$. On peut choisir le plus petit $k$ pour lequel $i_k$ dépasse un seuil, par exemple $0{,}80$. Deux axes dans l'exemple.
+:::
+
+:::
+
+
+
+
+## Combien d'axes conserver ?
+
+Le graphique des valeurs propres (*scree plot*) fournit un second outil :
+
+on retient les axes situés avant le **coude** de la courbe.
+
+::: {.panel-tabset}
+
+
+### Température des villes
+
+```{r}
+#| echo: false
+
+ggplot(eig, aes(x = axe, y = valeur_propre)) +
+  geom_line() +
+  geom_point(size = 3) +
+  labs(
+    x = "Axe principal",
+    y = "Valeur propre"
+  ) +
+  theme_minimal()
+```
+
+Ici, on peut tout à fait ne garder que les 2 premières composantes principales.
+
+
+### Exemple jouet
+
+```{r}
+#| echo: false
+
+eig_exemple <- data.frame(
+  axe = 1:8,
+  valeur = c(6, 3.5, 2.6, 0.6, 0.4, 0.3, 0.25, 0.2)
+)
+
+ggplot(eig_exemple, aes(x = axe, y = valeur)) +
+  geom_line() +
+  geom_point(size = 3) +
+  labs(
+    x = "Axe principal",
+    y = "Valeur propre"
+  ) +
+  theme_minimal()
+```
+
+Le coude se situe ici autour de l'axe 3 : on conserverait donc les 3 premiers axes.
+
+:::
+
+
+
+## Visualisation des individus
+
+Représentation du nuage de points par rapport aux 2 premières composantes principales.
+
+::: columns
+
+::: {.column width="70%"}
+
+:::{.r-stack}
+:::{.fragment .fade-out data-fragment-index=1}
+```{r}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 12
+#| out-width: "100%"
+
+ind <- as.data.frame(acp$ind$coord)
+ind$ville <- rownames(ind)
+
+plot(
+  acp,
+  choix = "ind",
+  axes = c(1, 2),
+  cex = 1.7,
+  invisible = "quali",
+  cex.axis = 1.6,
+  cex.lab = 1.6
+)
+
+```
+:::
+
+:::{.fragment .fade-in-then-out data-fragment-index=1}
+```{r}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 12
+#| out-width: "100%"
+
+ind <- as.data.frame(acp$ind$coord)
+ind$ville <- rownames(ind)
+
+plot(
+  acp,
+  choix = "ind",
+  axes = c(1, 2),
+  cex = 1.7,
+  invisible = "quali",
+  habillage = "Région",
+  cex.axis = 1.6,
+  cex.lab = 1.6
+)
+
+```
+:::
+
+:::
+:::
+
+
+
+::: {.column width="30%"}
+
+- axe 1: oppose villes les plus chaudes aux plus froides (Nice et Lille)
+- axe 2: oppose les des climats oceaniques aux climats plus continentaux, amplitude saisonniere (Brest et Strasbourg)
+
+:::
+
+:::
+
+# Étude du nuage des individus
+
+
+## Résultats de l’ACP
+
+- Les coordonnées des individus sur les axes principaux sont les **composantes principales** :
+
+$$
+C = XP \in \mathbb{R}^{n\times p},
+$$
+
+où
+$P=(u_1,\ldots,u_p)\in\mathbb{R}^{p\times p}$ est la matrice dont les colonnes sont les vecteurs propres.
+
+
+- La colonne $C_{:,k} \in \mathbb R^n$ donne les coordonnées des $n$ individus sur l'axe $k$.
+$$
+C_{:,k}
+=
+\begin{pmatrix}
+\langle X_{1,:},P_{:,k}\rangle\\
+\vdots\\
+\langle X_{n,:},P_{:,k}\rangle
+\end{pmatrix}.
+$$
+
+- Les premières colonnes de $C$ portent le plus d’**inertie** : les valeurs propres sont classées par ordre décroissant,
+
+
+::: {.callout-note}
+On peut représenter le nuage des individus dans le plan défini par les deux premiers axes principaux en considérant les deux premières colonnes de $C$.
+:::
+
+
+
+## Résultats de l’ACP
+
+- Par définition, la matrice de covariance de $C \in \mathbb R^{n \times p}$ est :
+
+$$
+S_C = \frac{1}{n}C^\top C = \Lambda.
+$$
+
+Ainsi,
+
+$$
+\operatorname{Cov}(C_{:,k},C_{:,k'})
+= \frac 1n \langle C_{:,k},C_{:,k'} \rangle
+\begin{cases}
+0 & \text{si } k\neq k',\\
+\lambda_k & \text{si } k=k'.
+\end{cases}
+$$
+
+Les **composantes principales sont donc non corrélées deux à deux**.
+
+- De plus, la variance de la composante principale $C_{:,k}$ est égale à la valeur propre associée :
+
+$$
+\operatorname{Var}(C_{:,k})=\lambda_k.
+$$
+
+- La valeur propre $\lambda_k$ correspond donc à l’**inertie portée par l’axe principal $k$**.
+
+
+## Résultats de l’ACP
+
+La corrélation entre une variable \(X_{:,j} \in \mathbb R^n\) et une composante principale \(C_{:,k} \in \mathbb R^n\) est donnée par :
+$$
+\operatorname{Cor}(X_{:,j},C_{:,k})
+=
+\frac{\operatorname{Cov}(X_{:,j}, C_{:,k})}
+{\sqrt{\operatorname{Var}(X_{:,j})}\sqrt{\operatorname{Var}(C_{:,k})}}
+=
+\frac{(SP_{:,k})_j}
+{\sqrt{\operatorname{Var}(X_{:,j})}\sqrt{\lambda_k}}
+$$
+
+Or, puisque $SP_{:,k}=\lambda_k P_{:,k}$, on a
+
+$$
+W
+=
+\left(
+\operatorname{Cor}(X_{:,j},C_{:,k})
+\right)_{j,k=1}^p
+=
+\Sigma_X^{-1/2}P\Lambda^{1/2}
+$$
+
+où
+
+$$
+\Sigma_X =
+\operatorname{Diag}
+\left(
+\operatorname{Var}(X_{:,1}),\ldots,
+\operatorname{Var}(X_{:,p})
+\right) \in \mathbb R^{p \times p}
+$$
+
+est la matrice diagonale des variances des variables.
+
+::: {.callout-note}
+Si les données sont **centrées-réduites**, alors $\Sigma_X=I_p$,
+:::
+
+On peut représenter les variables dans le plan défini par les deux premiers axes en considérant les deux premières colonnes de $W$.
+
+
+## Visualisation des variables
+
+Cette représentation est appelée le **cercle des corrélations**.
+
+::: columns
+
+::: {.column width="60%"}
+
+```{r}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 12
+#| out-width: "100%"
+
+plot(
+  acp,
+  choix = "var",
+  axes = c(1, 2),
+  cex = 1.7,
+  invisible = "quanti.sup",
+  cex.axis = 1.6,
+  cex.lab = 1.6
+)
+```
+
+:::
+
+::: {.column width="40%"}
+- Le coefficient de corrélation entre Oct et $C_1$ vaut $\sim 0{,}95$.
+
+- Tous les mois sont fortement et positivement corrélés à $C_1$.
+
+- Seuls les mois Janv, Fev, Juin et Juil sont fortement corrélés à $C_2$.
+:::
+
+:::
+
+- Les variables proches ont des corrélations similaires avec les deux axes.
+- Des directions opposées indiquent des corrélations opposées.
+
+
+## Exploiter sa connaissance des données
+
+
+- On remarque dans les données que, tout au long de l’année, il fait plus froid à Lille et plus chaud à Nice relativement aux autres villes de France.
+
+
+- On peut vérifier que la **température moyenne annuelle** est très fortement corrélée à $C_1$.
+
+- On remarque également que Brest est la ville où les **amplitudes thermiques** sont les plus faibles au cours de l’année, contrairement à Strasbourg.
+
+
+- On peut vérifier que l’**amplitude thermique annuelle** est très fortement corrélée à $C_2$.
+
+:::{.callout-tip}
+**La richesse des interprétations vient surtout de la connaissance des données.**
+
+Il n’est pas toujours aussi aisé de faire des liens directs avec des variables supplémentaires !
+
+:::
+
+
+## Ajout de variables supplémentaires
+
+::: columns
+
+::: {.column width="60%"}
+
+```{r}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 12
+#| out-width: "100%"
+
+plot(
+  acp,
+  choix = "varcor",
+  axes = c(1, 2),
+  cex = 1.7,
+  cex.axis = 1.6,
+  cex.lab = 1.6
+)
+```
+
+:::
+
+::: {.column width="40%"}
+- La corrélation entre $C_1$ et la température moyenne est très proche de 1.
+
+- La latitude est également fortement corrélée à cet axe.
+
+- L’amplitude annuelle est très fortement corrélée à $C_2$ .
+
+- La longitude est également fortement corrélée à cet axe.
+:::
+
+:::
+
+
+## En résumé
+
+### On est capable de :
+
+- représenter en 2 dimensions le nuage des individus vivant dans $\mathbb{R}^p$, de manière optimale au sens de l'inertie ;
+
+- identifier les principales variabilités entre les différents profils ;
+
+- observer les corrélations des variables avec les composantes principales.
+
+### On n'a pas encore :
+
+- représenté en 2 dimensions le nuage des variables vivant dans $\mathbb{R}^n$ ;
+
+- étudié les liaisons entre les variables.
+
+
+# Étude du nuage des variables
+
+## Nuage des variables
+
+### Problème
+
+Chaque variable est un point de $\mathbb{R}^n$, et on souhaite obtenir une représentation dans un espace de dimension $m<n$, typiquement $m=2$.
+
+On cherche à nouveau $m$ directions orthogonales
+$$
+v_1,\ldots,v_m,
+$$
+mais cette fois en maximisant la **corrélation globale avec les variables**.
+
+
+### Solution
+
+1. $v_1$ est la direction maximisant $\sum_{j=1}^p \rho^2(v,X_{:,j})$.
+
+2. $v_2$ est la direction orthogonale à $v_1$ qui maximise $\sum_{j=1}^p \rho^2(v,X_{:,j})$.
+
+3. $\ldots$
+
+où $\rho(U,V)$ désigne le **coefficient de corrélation** entre $U$ et $V$.
+
+## Plot twist
+
+On retrouve **exactement la même représentation** que lors de l’étude du nuage des individus !
+
+```{r}
+#| echo: false
+#| fig-width: 12
+#| fig-height: 12
+#| out-width: "100%"
+plot(
+  acp,
+  choix = "varcor",
+  axes = c(1, 2),
+  cex = 1.7,
+  cex.axis = 1.6,
+  cex.lab = 1.6
+)
+```
+
+## La dualité individus / variables
+
+L'ACP peut être vue de deux façons :
+
+- **Nuage des individus** : les $n$ individus sont des points de $\mathbb{R}^p$.
+- **Nuage des variables** : les $p$ variables sont des points de $\mathbb{R}^n$.
+
+Ces deux nuages sont construits à partir de la **même matrice de données** $X$.
+
+### Deux matrices, un même problème
+
+Pour les individus, on étudie :
+$$
+S_X = \frac{1}{n}X^\top X
+$$
+
+Pour les variables, on étudie :
+$$
+S_V = \frac{1}{n}XX^\top.
+$$
+
+Or $X^\top X$ et $XX^\top$ ont les **mêmes valeurs propres non nulles**.
+
+::: {.callout-tip}
+
+**C'est la dualité de l'ACP :**
+
+> étudier les individus ou étudier les variables conduit aux **mêmes valeurs propres** et donc aux **mêmes axes principaux**. Voir la SVD.
+
+:::
+
+### Pourquoi retrouve-t-on les mêmes axes ?
+
+Si
+$$
+X^\top X u_k = \lambda_k u_k,
+$$
+alors
+$$
+X^\top(Xu_k)=\lambda_k u_k.
+$$
+
+En posant
+$$
+v_k = \frac{Xu_k}{\sqrt{\lambda_k}},
+$$
+on obtient
+$$
+XX^\top v_k = \lambda_k v_k.
+$$
+
+Ainsi, les vecteurs propres de $X^\top X$ et de $XX^\top$
+sont reliés directement par $X$.
+
+**La représentation des individus et celle des variables sont donc deux faces du même objet.**
+
+
+# Aide a l'interpretation
+
+## Contribution
+
+::: {.r-stack}
+
+::: {.fragment .fade-out data-fragment-index=1}
+
+La contribution de l'individu $i$ à l'axe $k$ est :
+
+$$
+\operatorname{contrib}^{(ind)}_{i,k}
+=
+\frac{C_{i,k}^2}{n\lambda_k}
+=
+\frac{\text{inertie de }i\text{ sur l'axe }k}
+{\text{inertie totale de l'axe }k}.
+$$
+
+On a
+
+$$
+0 \leq \operatorname{contrib}^{(ind)}_{i,k} \leq 1
+$$
+
+et
+
+$$
+\sum_{i=1}^n
+\operatorname{contrib}^{(ind)}_{i,k}
+=1.
+$$
+
+**Interprétation :** un individu qui a une grande coordonnée en valeur absolue sur l'axe $k$ contribue fortement à la construction de cet axe.
+
+:::
+
+::: {.fragment .fade-in-then-out data-fragment-index=1}
+
+Pour une variable $j$, sa contribution à l'axe $k$ est :
+
+$$
+\operatorname{contrib}^{(var)}_{j,k}
+=
+\frac{W_{j,k}^2}{p\lambda_k}.
+$$
+
+On a également
+
+$$
+0 \leq \operatorname{contrib}^{(var)}_{j,k} \leq 1
+$$
+
+et
+
+$$
+\sum_{j=1}^p
+\operatorname{contrib}^{(var)}_{j,k}
+=1.
+$$
+
+**Interprétation :** une variable qui a une forte corrélation avec l'axe $k$ contribue fortement à sa construction.
+
+:::
+
+:::
+
+
+## Qualité de représentation
+
+La qualité de représentation, souvent appelée $\cos^2$, mesure la part de l'information d'un individu ou d'une variable portée par un axe. Pour un individu $i$ sur l'axe $k$ :
+
+$$
+\cos^2_{i,k}
+=
+\frac{C_{i,k}^2}{d^2(i,G)},
+$$
+
+où $d^2(i,G)$ est la distance au carré entre l'individu $i$ et le centre de gravité.
+
+On a :
+
+$$
+0 \leq \cos^2_{i,k} \leq 1.
+$$
+
+::: {.callout-note}
+**Interprétation :**
+
+- $\cos^2$ proche de $1$ : l'individu est **bien représenté** par l'axe ;
+- $\cos^2$ proche de $0$ : l'axe représente **peu** l'individu.
+
+:::
+
+Pour une représentation dans le plan $(k,l)$, on peut additionner les deux
+qualités de représentation :
+
+$$
+\cos^2_{i,(k,l)}
+=
+\cos^2_{i,k}+\cos^2_{i,l}.
+$$
+
+Un point dont le $\cos^2$ est élevé dans le plan est donc **bien représenté**
+par ce plan.
+
+::: {.callout-tip}
+Il est préférable d'interpréter les points **bien représentés** et les
+**contributions les plus fortes**, en mobilisant la connaissance du contexte
+des données.
+
+**Contribution** → *le point participe-t-il fortement à la construction de l'axe ?*
+
+**$\cos^2$** → *le point est-il bien représenté par l'axe ?*
+:::
+
+
+## Exemple : temperatures de villes francaises
+
+Pour des temperatures mensuelles mesurees dans plusieurs villes francaises, une ACP sur les douze mois peut mettre en evidence :
+
+- un premier axe lie au niveau moyen de temperature, opposant notamment les villes les plus chaudes aux plus froides ;
+- un second axe lie a l'amplitude saisonniere, opposant par exemple des climats oceaniques aux climats plus continentaux.
+
+La temperature moyenne annuelle, la latitude, l'amplitude annuelle et la longitude peuvent etre ajoutees comme variables supplementaires pour aider a nommer les axes, sans modifier leur construction.
+
+## Realiser une ACP dans R
+
+Le package `FactoMineR` fournit la fonction `PCA()`. Les colonnes actives doivent etre quantitatives ; les variables supplementaires peuvent etre declarees separement.
+
+```{r}
+#| eval: false
+library(FactoMineR)
+
+resultat <- PCA(
+  X,
+  ncp = 5,
+  scale.unit = TRUE,
+  graph = TRUE
+)
+```
+
+L'objet retourne contient notamment :
+
+- `eig` : valeurs propres, pourcentages et pourcentages cumules d'inertie ;
+- `ind$coord`, `ind$contrib`, `ind$cos2` : resultats pour les individus ;
+- `var$coord`, `var$contrib`, `var$cos2` : resultats pour les variables.
+
+## A retenir
+
+L'ACP fournit une representation de dimension reduite qui conserve au mieux l'inertie du nuage des individus. Elle aide a comparer des profils, a resumer les liaisons entre variables et a construire une interpretation informee par les donnees et leur contexte.

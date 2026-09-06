@@ -9,6 +9,7 @@ $metro-ink: #263238;
 $metro-muted: #6b7479;
 $metro-accent: #2e74b5;
 $metro-accent-dark: #245d91;
+$metro-accent-orange: #e67e22;
 $metro-rule: #d7dde0;
 $metro-table-header: #343a40;
 $metro-table-row: #e9ecef;
@@ -32,8 +33,13 @@ $selection-color: $metro-paper;
 $font-family-sans-serif: "Fira Sans Light", "Fira Sans", "Avenir Next", "Segoe UI", sans-serif;
 $font-family-monospace: "Fira Mono", "SFMono-Regular", monospace;
 
+// Font weights.
+$font-weight-light: 300;
+$font-weight-regular: 400;
+$font-weight-semibold: 600;
+
 // Presentation defaults.
-$presentation-font-size-root: 26px;
+$presentation-font-size-root: 22px;
 $presentation-line-height: 1.3;
 $presentation-heading-font: $font-family-sans-serif;
 $presentation-heading-color: $metro-ink;
@@ -41,9 +47,9 @@ $presentation-heading-line-height: 1.08;
 $presentation-heading-letter-spacing: 0;
 $presentation-heading-text-transform: none;
 $presentation-heading-text-shadow: none;
-$presentation-heading-font-weight: 400;
-$presentation-h1-font-size: 1.2em;
-$presentation-h2-font-size: 1.3em;
+$presentation-heading-font-weight: $font-weight-regular;
+$presentation-h1-font-size: 1.35em;
+$presentation-h2-font-size: 1.45em;
 $presentation-slide-text-align: left;
 $presentation-title-slide-text-align: center;
 $presentation-block-margin: 12px;
@@ -57,11 +63,12 @@ $presentation-block-margin: 12px;
 .reveal {
   --metro-accent: #{$metro-accent};
   --metro-accent-dark: #{$metro-accent-dark};
+  --metro-accent-orange: #{$metro-accent-orange};
   --metro-ink: #{$metro-ink};
   --metro-muted: #{$metro-muted};
   --metro-rule: #{$metro-rule};
   --metro-paper: #{$metro-paper};
-  font-weight: 300;
+  font-weight: $font-weight-light;
 }
 
 /*------------------------------------*/
@@ -101,8 +108,19 @@ $presentation-block-margin: 12px;
 
 // Emphasize strong text.
 .reveal strong {
+  font-weight: $font-weight-semibold;
+}
+
+.reveal .orange {
+  color: var(--metro-accent-orange);
+}
+
+.reveal .blue {
   color: var(--metro-accent-dark);
-  font-weight: 400;
+}
+
+.reveal .small {
+  font-size: 0.6em;
 }
 
 // Space lists.
@@ -128,7 +146,7 @@ $presentation-block-margin: 12px;
 .reveal .panel-tabset-tabby a {
   color: var(--metro-muted);
   font-size: 0.62em;
-  font-weight: 400;
+  font-weight: $font-weight-regular;
 }
 
 // Highlight the active tab.
@@ -136,6 +154,19 @@ $presentation-block-margin: 12px;
 .reveal .panel-tabset-tabby a[aria-selected="true"] {
   color: var(--metro-ink);
 }
+
+
+/*------------------------------------*/
+/*             CALLOUT BLOCK          */
+/*------------------------------------*/
+// Style block callouts.
+.callout-block {
+  color: var(--metro-ink);
+  margin: 1em 0;
+  padding: 0.75em 1em;
+  border-left: 3px solid var(--metro-muted);
+}
+
 
 /*------------------------------------*/
 /*             COLUMNS                */
@@ -362,7 +393,7 @@ $presentation-block-margin: 12px;
   margin: auto;
   border-collapse: separate;
   border-spacing: 0;
-  font-size: 0.8em;
+  font-size: 0.6em;
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 4px 12px $metro-shadow;
@@ -372,14 +403,14 @@ $presentation-block-margin: 12px;
 .data-table thead th {
   background: $metro-table-header;
   color: $metro-paper;
-  font-weight: 600;
-  padding: 12px 20px;
+  font-weight: $font-weight-semibold;
+  padding: 0.45em 0.8em;
   border: none;
 }
 
 // Space table cells.
 .data-table tbody td {
-  padding: 10px 20px;
+  padding: 0.4em 0.8em;
   border: none;
 }
 
@@ -395,10 +426,11 @@ $presentation-block-margin: 12px;
 
 // Emphasize first-column labels.
 .data-table tbody td:first-child {
-  font-weight: 600;
+  font-weight: $font-weight-semibold;
 }
 
 // Highlight rows on hover.
 .data-table tbody tr:hover {
   background: $metro-table-hover;
 }
+

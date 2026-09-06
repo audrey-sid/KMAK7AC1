@@ -1,0 +1,56 @@
+---
+title: "Statistique Exploratoire et Apprentissage non supervisé"
+subtitle: "KMAK7AC1"
+---
+
+::: {.course-banner}
+## Objectifs
+
+Présenter les concepts de base des méthodes exploratoires multidimensionnelles, qui permettent de décrire, synthétiser et/ou partitionner l’information contenue dans de grands tableaux de données.
+
+Nous aborderons d’abord les méthodes de réduction de dimension linéaire, puis les méthodes de classification non supervisée, ou clustering.
+:::
+
+
+## Prérequis et Compétences
+
+Préreuis
+
+- Notions d'algèbre linéaire (reduction d'endomorphismes)
+- statistique descriptive
+
+Acquisition
+
+- Savoir utiliser les outils selon le contexte d’application.
+- Mise en œuvre avec les outils moderne de datascience en R et/ou Python.
+- Interprétation des résultats obtenus.
+
+## Organisation générale 
+
+- 12 séances de Cours/TD
+- 3 séances de TP sur R et Python en groupe
+- Supports de cours en ligne et Moodle
+- Évaluation
+    - Contrôle continu (30%) : évaluation sur table 
+    - Contrôle terminal (70%) : évaluation sur table (semaine du 10/11).
+
+
+## Weekly schedule
+
+| Date | Activité | Thème |
+|---|---|---|
+| 07/09 | CM/TD | ACP |
+| 09/09 | CM/TD | ACP |
+| 21/09 | CM/TD | ACP |
+| 23/09 | CM/TD | ACM |
+| ??/09 | CM/TD | ACM |
+| 28/09 | CM/TD | ACM |
+| ??/09 | CM/TD | AFM |
+| 30/09 | CM/TD | AFM |
+| 05/10 | CM/TD | Apprentissage non supervisé |
+| 07/10 | CM/TD | Apprentissage non supervisé |
+| 07/10 | TP1 * 2 | |
+| 12/10 | CM/TD | Apprentissage non supervisé |
+| 14/10 | TP2 * 2 | |
+| 21/10 | CM/TD | Apprentissage non supervisé |
+| 21/10 | TP3 * 2 | |

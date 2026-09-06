@@ -1,44 +1,106 @@
+#######################################
+# Website
+#######################################
+
+
+lang: fr
+from: markdown+emoji
 project:
   type: website
-  output-dir: _site
+  render:
+  - index.qmd
+  - resources.qmd
+  - cours/index.qmd
+  - slides/index.qmd
+  - slides/ACP.qmd
+  - td/1_ACP/TD.qmd
+  - tp/index.qmd
+  - tp/markdown.qmd
+  - tp/quarto.qmd
+
+
 
 website:
+  bread-crumbs: false
+  back-to-top-navigation: true
+  page-navigation: true # true not working in website
   title: "Statistical Exploration"
+  site-url: https://bcharlier.github.io/KMAK7AC1/
+  repo-url: https://github.com/bcharlier/KMAK7AC1
+  repo-actions: [source, issue]
+  search:
+    location: navbar
+    type: textbox
   navbar:
-    left:
-      - href: index.qmd
-        text: Home
-      - href: chapter1.qmd
-        text: "Chapter 1: PCA"
-      - href: schedule.qmd
-        text: Schedule
-      - href: assessments.qmd
-        text: Assessments
-      - href: resources.qmd
-        text: Resources
-    right:
-      - icon: github
-        href: https://github.com/
-        aria-label: Course repository
-  sidebar:
-    style: docked
+    title: KMAK7AC1
+    background: primary
     search: true
-    contents:
-      - section: "Course"
-        contents:
-          - index.qmd
-          - chapter1.qmd
-          - schedule.qmd
-          - assessments.qmd
-          - resources.qmd
+    left:
+      - sidebar:Cours
+      - sidebar:Slides
+      - sidebar:TD
+      - sidebar:TP
+      - sidebar:Quarto
+    right:
+      - text: "{{<iconify simple-icons:moodle title='Moodle'>}}"
+        href: https://moodle.utoulouse.fr/
+        aria-label: Moodle
+      - text: "{{< iconify simple-icons:github title='GitHub'>}}"
+        href: https://github.com/bcharlier/KMAK7AC1
+        aria-label: GitHub
+  sidebar:
+
+    - id: Cours
+      collapse-level: 3
+      contents: 
+        - cours/index.qmd
+
+    - id: Slides
+      collapse-level: 3
+      contents:
+        - slides/ACP.qmd
+
+    - id: TD
+      collapse-level: 3
+      contents:
+        - td/1_ACP/TD.qmd
+    
+    - id: TP
+      collapse-level: 3
+      contents:
+        - tp/index.qmd
+    
+    - id: Quarto
+      collapse-level: 2
+      contents:
+        - tp/markdown.qmd
+        - tp/quarto.qmd
+
 
 format:
   html:
-    theme: cosmo
-    css: styles.css
-    toc: true
-    toc-location: right
-    code-copy: true
+    theme:
+      lux
+
+    html-math-method: katex
+    number-sections: false
+    toc-depth: 3
+    code-fold: false
+    code-tools:
+      toggle: false
+      source: false
+    code-overflow: wrap
+    highlight-style: github
+    fig-responsive: true
+    fig.align: center
+    reference-location: margin
+    citation-location: margin
+    css: custom.scss
+    from: markdown+emoji
+
+    #toc-location: right
+    #toc: true
 
 execute:
   freeze: auto
+  cache: false

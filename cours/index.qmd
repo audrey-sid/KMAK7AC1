@@ -1,0 +1,8 @@
+---
+title: "Supports de cours"
+---
+
+1. [Analyse en Composantes Principales (ACP)](../slides/ACP.qmd)
+2. Analyse des Correspondances Multiples (ACM)
+3. Analyse Factorielle Multiple (AFM)
+4. Apprentissage non supervisé
