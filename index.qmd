@@ -12,30 +12,30 @@ Nous aborderons d’abord les méthodes de réduction de dimension linéaire, pu
 :::
 
 
-## Prérequis et Compétences
+## Prérequis et compétences
 
-Préreuis
+Prérequis
 
-- Notions d'algèbre linéaire (reduction d'endomorphismes)
-- statistique descriptive
+- Notions d'algèbre linéaire (réduction d'endomorphismes)
+- Statistique descriptive
 
-Acquisition
+Compétences acquises
 
 - Savoir utiliser les outils selon le contexte d’application.
-- Mise en œuvre avec les outils moderne de datascience en R et/ou Python.
+- Mise en œuvre avec les outils modernes de la science des données en R et/ou Python.
 - Interprétation des résultats obtenus.
 
-## Organisation générale 
+## Organisation générale
 
 - 12 séances de Cours/TD
 - 3 séances de TP sur R et Python en groupe
 - Supports de cours en ligne et Moodle
 - Évaluation
-    - Contrôle continu (30%) : évaluation sur table 
-    - Contrôle terminal (70%) : évaluation sur table (semaine du 10/11).
+    - Contrôle continu (30 %) : évaluation sur table
+    - Contrôle terminal (70 %) : évaluation sur table (semaine du 10/11).
 
 
-## Weekly schedule
+## Séances en détail
 
 | Date | Activité | Thème |
 |---|---|---|

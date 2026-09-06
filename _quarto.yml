@@ -5,6 +5,8 @@
 
 lang: fr
 from: markdown+emoji
+filters:
+  - iconify
 project:
   type: website
   render:
