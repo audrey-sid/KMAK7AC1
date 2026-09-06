@@ -1,14 +1,16 @@
 ---
 title: "Statistique Exploratoire et Apprentissage non supervisé"
-subtitle: "Présentation"
+subtitle: "Présentation de l'UE"
 author: "Benjamin Charlier, Adrien Mazoyer"
 date: ""
 format:
   revealjs:
     theme: metropolis.scss
+    slide-level: 2
+    toc: false
+    toc-depth: 1
+    email-obfuscation: javascript
     slide-number: true
-    transition: fade
-    chalkboard: false
     code-line-numbers: false
     eval: true
     echo: true
@@ -30,6 +32,12 @@ knitr:
   margin-top: 0.6em;
 }
 
+.reveal .slides section li > ul,
+.reveal .slides section li > ol {
+  display: block;
+  margin-top: 0.35em;
+}
+
 .reveal .slides section li {
   margin-bottom: 0.65em;
 }
@@ -41,9 +49,6 @@ knitr:
 
 ## Organisation générale
 
-<br><br>
-
-
 - 12 séances de cours/TD
 - 3 séances de TP sur R et Python en groupe
 - Supports de cours en ligne (https://bcharlier.github.io/KMAK7AC1/) et sur Moodle
@@ -51,6 +56,8 @@ knitr:
   - 1 contrôle continu : évaluation sur table pendant 1 h
   - 1 contrôle terminal : évaluation sur table pendant 2 h
   - Bonus : *pull request* pour améliorer ce cours, jusqu'à 1 point sur la note finale
+
+- Contact: <benjamin.charlier@inrae.fr>
 
 
 ## Statistique exploratoire multidimensionnelle
@@ -102,8 +109,8 @@ knitr:
 
 ### Programme
 
-1. [Analyse en composantes principales (quantitatif)](../slides/ACP.qmd)
-2. Analyse des correspondances multiples (qualitatif)
-3. Analyse Factorielle Multiple (groupes)
+1. [Analyse en composantes principales (variable quantitative)](../slides/ACP.qmd)
+2. Analyse des correspondances multiples (variable qualitative)
+3. Analyse Factorielle Multiple (variables groupées)
 4. Apprentissage non supervisé (clustering)
 

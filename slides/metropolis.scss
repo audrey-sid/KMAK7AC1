@@ -85,14 +85,14 @@ $presentation-block-margin: 12px;
   padding: 0 1.15em 1.8em;
 }
 
-// Style slide headings.
-.reveal h2 {
+// Style the first heading of each slide independently of slide-level.
+.reveal .slides section.slide:not(#title-slide) > :is(h1, h2, h3, h4, h5, h6):first-child {
   background: var(--metro-accent) !important;
   border: 0;
   box-shadow: 0 0 0 100vmax var(--metro-accent);
   color: $metro-paper !important;
   clip-path: inset(0 -100vmax);
-  margin: 0 0 0.8em;
+  margin: 0 0 clamp(1em, 5vh, 8em) !important;
   padding: 0.32em 0.7em;
 }
 
