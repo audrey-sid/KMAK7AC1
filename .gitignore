@@ -8,6 +8,7 @@ sandbox/
 
 _site/
 .quarto/
+/.quarto/
 _freeze/
 # Generated figures
 figure-revealjs/
@@ -296,3 +297,4 @@ rsconnect/
 
 # vim temp files
 *.swp
+
