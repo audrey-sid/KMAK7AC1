@@ -882,7 +882,7 @@ françaises
 ```{r}
 #| echo: false
 
-fname <- "./data/AnaDo_JeuDonnees_TemperatFrance.csv"
+fname <- "data/TemperatFrance.csv"
 
 temperature <- read.csv(
   fname,

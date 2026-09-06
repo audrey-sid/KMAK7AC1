@@ -76,7 +76,7 @@ leur qualité olfacto-gustative.
 
 ```{r}
 #| echo: false
-cidre <- read.csv("./cidre.csv", header = TRUE, sep = ";")
+cidre <- read.csv("data/cidre.csv", header = TRUE, sep = ";")
 cidre
 ```
 
