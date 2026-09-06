@@ -1,0 +1,109 @@
+---
+title: "Statistique Exploratoire et Apprentissage non supervisé"
+subtitle: "Présentation"
+author: "Benjamin Charlier, Adrien Mazoyer"
+date: ""
+format:
+  revealjs:
+    theme: metropolis.scss
+    slide-number: true
+    transition: fade
+    chalkboard: false
+    code-line-numbers: false
+    eval: true
+    echo: true
+    format:
+    width: 1024
+    height: 768
+
+knitr:
+  opts_chunk:
+    prompt: true
+---
+
+<style>
+
+.reveal .slides section ul,
+.reveal .slides section ol {
+  display: inline-block;
+  text-align: left;
+  margin-top: 0.6em;
+}
+
+.reveal .slides section li {
+  margin-bottom: 0.65em;
+}
+
+.reveal .slides section li li {
+  margin-bottom: 0.35em;
+}
+</style>
+
+## Organisation générale
+
+<br><br>
+
+
+- 12 séances de cours/TD
+- 3 séances de TP sur R et Python en groupe
+- Supports de cours en ligne (https://bcharlier.github.io/KMAK7AC1/) et sur Moodle
+- Évaluation
+  - 1 contrôle continu : évaluation sur table pendant 1 h
+  - 1 contrôle terminal : évaluation sur table pendant 2 h
+  - Bonus : *pull request* pour améliorer ce cours, jusqu'à 1 point sur la note finale
+
+
+## Statistique exploratoire multidimensionnelle
+
+### Multidimensionnel
+- S’oppose à unidimensionnel ;
+- On s’intéresse à plusieurs (souvent beaucoup) variables en même temps ;
+- Exemple : une enquête. Chaque individu répond à $p$ questions, et on veut étudier les $p$ réponses à la fois.
+
+
+### Exploratoire
+
+- On ne se donne pas une question précise, comme en statistique descriptive : pas d’inférence ici !
+- Recherche de structures
+- Visualisation
+- Interprétation
+
+## Deux problématiques typiques
+
+
+### Réduction de dimension
+
+- Réduire le nombre de variables prises en compte
+- Réduire le coût computationnel
+- Améliorer la qualité du modèle (éviter le sur-apprentissage)
+- Réussir à “visualiser” les données
+
+
+### Apprentissage
+
+- **Supervisé :** les données sont étiquetées et on cherche à prédire l’étiquette de nouvelles données.
+- **Non supervisé :** pas d'étiquetage connu ; on cherche à regrouper les individus qui se ressemblent.
+
+
+## Programme et objectifs du cours
+
+### Prérequis
+
+- Notions d'algèbre linéaire (réduction d'endomorphismes)
+- Statistique descriptive
+
+
+### Compétences à acquérir
+
+- Savoir utiliser les outils selon le contexte d’application.
+- Mise en œuvre avec les outils modernes de la science des données en R et/ou Python.
+- Interprétation des résultats obtenus.
+
+
+### Programme
+
+1. [Analyse en composantes principales (quantitatif)](../slides/ACP.qmd)
+2. Analyse des correspondances multiples (qualitatif)
+3. Analyse Factorielle Multiple (groupes)
+4. Apprentissage non supervisé (clustering)
+

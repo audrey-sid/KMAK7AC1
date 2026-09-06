@@ -6,15 +6,18 @@ date: ""
 format:
   revealjs:
     theme: metropolis.scss
+    slide-level: 2
+    toc: true
+    toc-depth: 1
     slide-number: true
-    transition: fade
-    chalkboard: false
     code-line-numbers: false
     eval: true
     echo: true
-    format:
     width: 1024
     height: 768
+    progress: true
+    history: false
+
 
 knitr:
   opts_chunk:

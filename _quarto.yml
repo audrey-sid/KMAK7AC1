@@ -15,6 +15,7 @@ project:
   - cours/index.qmd
   - slides/index.qmd
   - slides/ACP.qmd
+  - slides/presentation.qmd
   - td/1_ACP/TD.qmd
   - tp/index.qmd
   - tp/markdown.qmd
@@ -60,6 +61,7 @@ website:
     - id: Slides
       collapse-level: 3
       contents:
+        - slides/presentation.qmd
         - slides/ACP.qmd
 
     - id: TD

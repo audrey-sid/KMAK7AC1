@@ -31,8 +31,9 @@ Compétences acquises
 - 3 séances de TP sur R et Python en groupe
 - Supports de cours en ligne et Moodle
 - Évaluation
-    - Contrôle continu (30 %) : évaluation sur table
-    - Contrôle terminal (70 %) : évaluation sur table (semaine du 10/11).
+    - 1 Contrôle continu: évaluation sur table 1h
+    - 1 Contrôle terminal: évaluation sur table 2h
+    - Bonus: *Pull Request* pour améliorer ce cours jusquà 1pt sur la note finale
 
 
 ## Séances en détail
