@@ -1,3 +1,4 @@
+/*-- scss:mixins --*/
 @mixin word-wrap() {
   overflow-wrap: break-word;
   word-wrap: break-word;
@@ -10,6 +11,7 @@
   hyphens: auto;
 }
 
+/*-- scss:rules --*/
 a {
   overflow-wrap: break-word;
   word-wrap: break-word;

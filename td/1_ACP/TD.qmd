@@ -1,8 +1,5 @@
 ---
 title: "TD 1 -- Analyse en Composantes Principales"
-format:
-  html:
-    css: ../../custom.scss
 ---
 
 ```{r}

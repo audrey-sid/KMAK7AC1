@@ -79,8 +79,7 @@ website:
 
 format:
   html:
-    theme:
-      lux
+    theme: [lux, custom.scss]
 
     html-math-method: katex
     number-sections: false
@@ -95,7 +94,6 @@ format:
     fig.align: center
     reference-location: margin
     citation-location: margin
-    css: custom.scss
     from: markdown+emoji
 
     #toc-location: right
