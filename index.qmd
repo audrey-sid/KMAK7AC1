@@ -14,7 +14,7 @@ Nous aborderons d’abord les méthodes de réduction de dimension linéaire, pu
 
 ## Prérequis et Compétences
 
-Préreuis
+Prérequis
 
 - Notions d'algèbre linéaire (reduction d'endomorphismes)
 - statistique descriptive
