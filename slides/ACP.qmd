@@ -242,7 +242,7 @@ $$
 X_{i,j} \leftarrow \frac{X_{i,j} - \bar{X}_{:,j}}{s_{X_{:,j}}}.
 $$
 
-Ce traitement amène à moyenne 0 et variance a 1 et supprime les effets d'échelle (unites de mesure). 
+Ce traitement amène à moyenne 0 et variance à 1 et supprime les effets d'échelle (unites de mesure). 
 
 ::: {.callout-note}
 ### Consequence
